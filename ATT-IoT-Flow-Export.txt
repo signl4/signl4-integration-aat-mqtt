@@ -1,0 +1,177 @@
+
+[
+    {
+        "id": "e1a73c7f.5f1cd",
+        "type": "tab",
+        "label": "SIGNL4 Alert"
+    },
+    {
+        "id": "a6e95b4a.3dfb48",
+        "type": "mqtt-broker",
+        "z": "",
+        "broker": "test.mosquitto.org",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "username": "",
+        "password": "",
+        "encryptObj": [
+            "username",
+            "password"
+        ]
+    },
+    {
+        "id": "719c56f6.327da8",
+        "type": "http in",
+        "z": "e1a73c7f.5f1cd",
+        "name": "HTTP GET Test",
+        "url": "SIGNL4Alert",
+        "method": "get",
+        "username": "",
+        "password": "",
+        "authType": "noAuth",
+        "useAuth": false,
+        "useOauth": false,
+        "encryption": "none",
+        "realm": "",
+        "clientId": "",
+        "clientSecret": "",
+        "site": "",
+        "authorizationPath": "/oauth/authorize",
+        "tokenPath": "/oauth/access_token",
+        "scope": "",
+        "encryptObj": [
+            "username",
+            "password",
+            "clientId",
+            "clientSecret"
+        ],
+        "swaggerDoc": "",
+        "x": 104,
+        "y": 246,
+        "wires": [
+            [
+                "8fb84a53.0a20b8"
+            ]
+        ]
+    },
+    {
+        "id": "6df9e76b.d7ec88",
+        "type": "http response",
+        "z": "e1a73c7f.5f1cd",
+        "name": "Response",
+        "x": 709.859375,
+        "y": 288,
+        "wires": []
+    },
+    {
+        "id": "f39a0242.5e29b",
+        "type": "http request",
+        "z": "e1a73c7f.5f1cd",
+        "name": "SIGNL4 Webhook",
+        "useAuth": false,
+        "username": "",
+        "password": "",
+        "encryption": "none",
+        "encryptObj": [
+            "username",
+            "password"
+        ],
+        "timeout": "",
+        "method": "POST",
+        "ret": "obj",
+        "url": "https://connect.signl4.com/webhook/{team-secret}",
+        "tls": "",
+        "acceptUnauthorizedRequest": false,
+        "x": 518.859375,
+        "y": 289,
+        "wires": [
+            [
+                "6df9e76b.d7ec88"
+            ]
+        ]
+    },
+    {
+        "id": "79e5433.367b2bc",
+        "type": "comment",
+        "z": "e1a73c7f.5f1cd",
+        "name": "Description",
+        "info": "# SIGNL4 - Mobile Alerting via app, push, text, voice with tracking & escalation\n\nSIGNL4 (https://www.signl4.com) is an app-based alerting service.\n\nThis sample flow shows a simple alerting workflow. The trigger is an HTTP GET request. After some processing we send the alert data to the SIGNL4 Webhook. In this node you just need to specify your team secret.\n\nGet the SIGNL4 app at https://www.signl4.com.\n",
+        "x": 411.859375,
+        "y": 158,
+        "wires": []
+    },
+    {
+        "id": "a70262e9.2b0b6",
+        "type": "mqtt in",
+        "z": "e1a73c7f.5f1cd",
+        "name": "MQTT",
+        "topic": "signl4",
+        "qos": "2",
+        "broker": "a6e95b4a.3dfb48",
+        "x": 88.859375,
+        "y": 366,
+        "wires": [
+            [
+                "cd6b8e83.e4f6a"
+            ]
+        ]
+    },
+    {
+        "id": "b4817233.e5628",
+        "type": "debug",
+        "z": "e1a73c7f.5f1cd",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 701.859375,
+        "y": 364,
+        "wires": []
+    },
+    {
+        "id": "cd6b8e83.e4f6a",
+        "type": "function",
+        "z": "e1a73c7f.5f1cd",
+        "name": "Format to JSON",
+        "func": "// Format the message\n\nmsg.payload = \"{\\\"Subject\\\": \\\"AT&T IoT - MQTT Alert\\\", \\\"Alert\\\": \\\"\" + msg.payload + \"\\\"}\";\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "dependencies": [],
+        "x": 291.859375,
+        "y": 366,
+        "wires": [
+            [
+                "b4817233.e5628",
+                "f39a0242.5e29b"
+            ]
+        ]
+    },
+    {
+        "id": "8fb84a53.0a20b8",
+        "type": "template",
+        "z": "e1a73c7f.5f1cd",
+        "name": "Payload - URL Test",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\"payload\": \"AT&T IoT - URL Test\"}",
+        "x": 294.859375,
+        "y": 245,
+        "wires": [
+            [
+                "f39a0242.5e29b"
+            ]
+        ]
+    }
+]
